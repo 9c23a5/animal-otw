@@ -68,7 +68,6 @@ end
 
 gem "dockerfile-rails", ">= 1.5", :group => :development
 
-gem "pg", "~> 1.1"
 
 gem "sentry-ruby", "~> 5.15"
 
