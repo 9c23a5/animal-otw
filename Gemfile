@@ -65,3 +65,11 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
 end
+
+gem "dockerfile-rails", ">= 1.5", :group => :development
+
+gem "pg", "~> 1.5"
+
+gem "sentry-ruby", "~> 5.15"
+
+gem "sentry-rails", "~> 5.15"
