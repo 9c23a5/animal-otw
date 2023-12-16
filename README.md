@@ -36,9 +36,9 @@ For ASDF's `.tool-versions` you need to clone this repo first (`git clone https:
     sudo passwd postgres
     sudo service postgresql start
     # Now we should have Postgres running, let's create our user:
-    sudo -u postgres createuser $(whoami) -s
     createdb $(whoami)
-    # And let's create an auth config
+    # And let's modify our auth config for Rails
+    sudo sed -i 's/peer/trust/g' /etc/postgresql/14/main/pg_hba.conf
     sudo sed -E 's/(host\s+all\s+all\s+127\.0\.0\.1\/32\s+)scram-sha-256/\1trust/' /etc/postgresql/14/main/pg_hba.conf
     # Finally, by default template DBs are ASCII, that's bad:
     psql -c "update pg_database set encoding = pg_char_to_encoding('UTF8') where datname IN ('template0', 'template1')"
