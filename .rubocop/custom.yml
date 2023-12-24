@@ -1,0 +1,72 @@
+Layout/SpaceInsideHashLiteralBraces:
+  EnforcedStyle: no_space
+
+Layout/SpaceInsideArrayLiteralBrackets:
+  EnforcedStyle: no_space
+
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+
+Style/TrailingCommaInArguments:
+  EnforcedStyleForMultiline: no_comma
+
+Layout/SpaceBeforeBlockBraces:
+  EnforcedStyle: space
+
+Layout/LineLength:
+  Enabled: true
+  Max: 150
+  AllowedPatterns:
+    - '".*?"$' # Allow anything starting and ending with ""
+    - "'.*?'$" # Allow anything starting and ending with ''
+    - ^\s*#.*$ # Allow comments
+
+Layout/EndAlignment:
+  EnforcedStyleAlignWith: variable
+
+Layout/CaseIndentation:
+  EnforcedStyle: end
+
+Layout/FirstArgumentIndentation:
+  EnforcedStyle: consistent
+
+Layout/FirstArrayElementIndentation:
+  EnforcedStyle: consistent
+
+Layout/FirstHashElementIndentation:
+  EnforcedStyle: consistent
+
+Layout/LineEndStringConcatenationIndentation:
+  EnforcedStyle: indented
+
+Layout/MultilineMethodCallIndentation:
+  EnforcedStyle: indented
+
+Layout/MultilineOperationIndentation:
+  EnforcedStyle: indented
+
+Style/GlobalVars:
+  Enabled: true
+
+Style/FrozenStringLiteralComment:
+  Enabled: true
+  EnforcedStyle: always_true
+  SafeAutoCorrect: true
+
+Style/MixinUsage:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false
+
+Metrics/BlockLength:
+  Enabled: false
+
+Metrics/MethodLength:
+  Enabled: false
+
+Metrics/CyclomaticComplexity:
+  Enabled: false
+
+Metrics/PerceivedComplexity:
+  Enabled: false

@@ -1,0 +1,11 @@
+require:
+  - rubocop-performance
+
+AllCops:
+  SuggestExtensions: false
+  CacheRootDirectory: "tmp/rubocop_cache"
+  NewCops: enable
+  TargetRubyVersion: 3.2.2
+
+inherit_from:
+  - .rubocop/custom.yml
