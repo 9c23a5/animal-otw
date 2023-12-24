@@ -1,6 +1,4 @@
 require:
-  - standard
-  - standard-custom
   - rubocop-performance
 
 AllCops:
