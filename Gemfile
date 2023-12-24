@@ -60,6 +60,7 @@ group :development do
   # gem "spring"
 
   gem "dockerfile-rails", ">= 1.5"
+  gem 'rubocop', require: false
 end
 
 group :test do

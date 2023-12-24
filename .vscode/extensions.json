@@ -1,5 +1,7 @@
 {
     "recommendations": [
-        "editorconfig.editorconfig"
+        "editorconfig.editorconfig",
+        "Shopify.ruby-lsp",
+        "testdouble.vscode-standard-ruby"
     ]
 }
