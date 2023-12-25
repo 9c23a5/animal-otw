@@ -34,4 +34,5 @@
 # Ignore master key for decrypting credentials and more.
 /config/master.key
 
-.connection-string
+# Ignore irb history
+.irb_history
