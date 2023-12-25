@@ -1,1 +1,8 @@
-<h1>Your animal of the week is</h1>
+<h1>Animals stored: <%= Animal.all.count %></h1>
+
+
+<% if @aotw %>
+<h1>The animal of the week is: <%= @aotw.animal.name%>!</h1>
+<% else %>
+<h1>Currently there's no animal of the week. Please come back later!</h1>
+<% end %>
