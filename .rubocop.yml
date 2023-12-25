@@ -6,6 +6,8 @@ AllCops:
   CacheRootDirectory: "tmp/rubocop_cache"
   NewCops: enable
   TargetRubyVersion: 3.2.2
+  Exclude:
+    - "db/*"
 
 inherit_from:
   - .rubocop/custom.yml
