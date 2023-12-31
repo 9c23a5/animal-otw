@@ -36,3 +36,6 @@
 
 # Ignore irb history
 .irb_history
+
+# Ignore database connection string
+.connection-string

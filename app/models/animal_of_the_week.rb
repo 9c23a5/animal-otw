@@ -6,7 +6,9 @@ class AnimalOfTheWeek < ApplicationRecord
   validates :date_start, presence: true
   validate :only_one_current_animal_of_the_week, unless: :date_end
 
-  scope :current_animal_of_the_week, -> { find_by(date_end: nil) }
+  def self.current_animal_of_the_week
+    find_by(date_end: nil)
+  end
 
   def only_one_current_animal_of_the_week
     nil unless AnimalOfTheWeek.where(date_end: nil).count > 1
