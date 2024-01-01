@@ -128,8 +128,6 @@ GEM
     net-smtp (0.4.0)
       net-protocol
     nio4r (2.7.0)
-    nokogiri (1.15.5-aarch64-linux)
-      racc (~> 1.4)
     nokogiri (1.15.5-arm64-darwin)
       racc (~> 1.4)
     nokogiri (1.15.5-x86_64-linux)
@@ -235,6 +233,11 @@ GEM
       rubocop-factory_bot (~> 2.22)
     ruby-progressbar (1.13.0)
     ruby2_keywords (0.0.5)
+    sentry-rails (5.15.2)
+      railties (>= 5.0)
+      sentry-ruby (~> 5.15.2)
+    sentry-ruby (5.15.2)
+      concurrent-ruby (~> 1.0, >= 1.0.2)
     sprockets (4.2.1)
       concurrent-ruby (~> 1.0)
       rack (>= 2.2.4, < 4)
@@ -249,6 +252,8 @@ GEM
     timeout (0.4.1)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
+    tzinfo-data (1.2023.4)
+      tzinfo (>= 1.0.0)
     unicode-display_width (2.5.0)
     web-console (4.2.1)
       actionview (>= 6.0.0)
@@ -262,7 +267,6 @@ GEM
     zeitwerk (2.6.12)
 
 PLATFORMS
-  aarch64-linux
   arm64-darwin-22
   x86_64-linux
 
@@ -278,6 +282,8 @@ DEPENDENCIES
   rubocop
   rubocop-performance
   rubocop-rspec (~> 2.0)
+  sentry-rails (~> 5.15)
+  sentry-ruby (~> 5.15)
   sprockets-rails
   stimulus-rails
   tzinfo-data
