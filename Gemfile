@@ -65,6 +65,7 @@ group :development do
   gem "dockerfile-rails", ">= 1.5"
   gem "rubocop", require: false
   gem "rubocop-performance", require: false
+  gem "rubocop-rspec", "~> 2.0", require: false
 end
 
 group :test do
