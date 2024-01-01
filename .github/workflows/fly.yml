@@ -1,15 +1,71 @@
-name: Fly Deploy
-on:
-  push:
-    branches:
-      - main
+name: CI/CD
+on: push
+
+env:
+  docker-image-tag: animal-of-the-week:${{ github.sha }}
+
 jobs:
-  deploy:
-    name: Deploy app
+  build:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v3
-      - uses: superfly/flyctl-actions/setup-flyctl@master
-      - run: flyctl deploy --remote-only
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Docker build
+        uses: docker/build-push-action@v5
+        with:
+          tags: ${{ env.docker-image-tag }}
+          context: .
+          load: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  test:
+    runs-on: ubuntu-latest
+
+    env:
+      PGHOST: postgres
+      PGUSER: postgres
+      PGPORT: 5432
+      RAILS_ENV: test
+
+    services:
+      postgres:
+        image: postgres:14-alpine
         env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: ""
+          POSTGRES_DB: postgres
+        ports:
+        - 5432:5432
+
+    steps:
+      - name: Prepare database
+        run: bin/rails db:create
+      - name: Run rspec
+        run: docker run -t --env RAILS_ENV=test --env CI=true --network=host $docker-image-tag bundle exec rspec
+
+  deploy:
+    if: github.ref_name == 'main'
+    needs: [build, test]
+    runs-on: ubuntu-latest
+
+    env:
+      FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+
+    steps:
+      - name: Auth to Fly.io Docker registry
+        uses: superfly/flyctl-actions/setup-flyctl@master
+      - run: flyctl auth docker
+      - name: Push image to remote repository
+        uses: docker/setup-buildx-action@v3
+        with:
+          tags: registry.fly.io/${{ env.docker-image-tag }}
+          context: .
+          push: true
+
+      - name: Deploy image to Fly.io
+        uses: superfly/flyctl-actions/setup-flyctl@master
+      - run: flyctl deploy -i ${{ env.docker-image-tag }} --local-only
