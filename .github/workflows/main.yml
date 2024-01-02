@@ -45,6 +45,8 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           outputs: type=docker,dest=/tmp/aotw-build.tar
+      - name: Load Docker image
+        run: docker load --input /tmp/aotw-build.tar
       - name: Prepare database
         run: docker run -t --env RAILS_ENV=test --env CI=true --network=host $docker_image_tag bin/rails db:create 
       - name: Run rspec
@@ -89,7 +91,7 @@ jobs:
           name: aotw-build
           path: /tmp
       - name: Load Docker image
-        run: docker load --input /tmp/myimage.tar
+        run: docker load --input /tmp/aotw-build.tar
       - name: Push image to remote repository
         run: |
           docker tag $docker_image_tag "$remote_docker_image_tag" 
