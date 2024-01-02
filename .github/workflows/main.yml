@@ -59,7 +59,7 @@ jobs:
         with:
           ruby-version: '3.2.2'
           bundler-cache: true
-      - name: Run rubocop
+      - name: Run Rubocop
         run: bundle exec rubocop --format=github
 
   deploy:
