@@ -2,11 +2,28 @@ name: CI/CD
 on: push
 
 env:
-  docker-image-tag: animal-of-the-week:${{ github.sha }}
+  docker_image_tag: animal-of-the-week:${{ github.sha }}
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    env:
+      PGHOST: localhost
+
+    services:
+      postgres:
+        image: postgres:14-alpine
+        env:
+          POSTGRES_USER: rails
+          POSTGRES_HOST_AUTH_METHOD: trust
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+        - 5432:5432
 
     steps:
       - name: Checkout
@@ -16,56 +33,37 @@ jobs:
       - name: Docker build
         uses: docker/build-push-action@v5
         with:
-          tags: ${{ env.docker-image-tag }}
+          tags: |
+            ${{ env.docker_image_tag }}
+
           context: .
           load: true
           cache-from: type=gha
           cache-to: type=gha,mode=max
-
-  test:
-    runs-on: ubuntu-latest
-
-    env:
-      PGHOST: postgres
-      PGUSER: postgres
-      PGPORT: 5432
-      RAILS_ENV: test
-
-    services:
-      postgres:
-        image: postgres:14-alpine
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: ""
-          POSTGRES_DB: postgres
-        ports:
-        - 5432:5432
-
-    steps:
+      - name: debug
+        run: echo "docker_image_tag is $docker_image_tag"
       - name: Prepare database
-        run: bin/rails db:create
+        run: docker run -t --env RAILS_ENV=test --env CI=true --network=host $docker_image_tag bin/rails db:create 
       - name: Run rspec
-        run: docker run -t --env RAILS_ENV=test --env CI=true --network=host $docker-image-tag bundle exec rspec
+        run: docker run -t --env RAILS_ENV=test --env CI=true --network=host $docker_image_tag bundle exec rspec
 
   deploy:
     if: github.ref_name == 'main'
-    needs: [build, test]
+    needs: build
     runs-on: ubuntu-latest
 
     env:
       FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+      remote_docker_image_tag: registry.fly.io/animal-of-the-week:${{ github.sha }}
 
     steps:
       - name: Auth to Fly.io Docker registry
         uses: superfly/flyctl-actions/setup-flyctl@master
       - run: flyctl auth docker
       - name: Push image to remote repository
-        uses: docker/setup-buildx-action@v3
-        with:
-          tags: registry.fly.io/${{ env.docker-image-tag }}
-          context: .
-          push: true
-
+        run: |
+          docker tag $docker_image_tag "$remote_docker_image_tag" 
+          docker push "$remote_docker_image_tag"
       - name: Deploy image to Fly.io
         uses: superfly/flyctl-actions/setup-flyctl@master
-      - run: flyctl deploy -i ${{ env.docker-image-tag }} --local-only
+      - run: flyctl deploy -i ${{ env.remote_docker_image_tag }} --local-only -a animal-of-the-week
