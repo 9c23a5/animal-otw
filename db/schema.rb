@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2023_12_25_025130) do
+ActiveRecord::Schema[7.1].define(version: 2024_01_02_041522) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -29,6 +29,7 @@ ActiveRecord::Schema[7.1].define(version: 2023_12_25_025130) do
     t.text "wikipedia_description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_animals_on_name", unique: true
   end
 
   add_foreign_key "animal_of_the_weeks", "animals", on_delete: :cascade

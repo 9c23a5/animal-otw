@@ -1,0 +1,84 @@
+name: CI/CD
+on: push
+
+concurrency:
+  group: ${{ github.workflow}}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  docker_image_tag: animal-of-the-week:${{ github.sha }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    env:
+      PGHOST: localhost
+
+    services:
+      postgres:
+        image: postgres:14-alpine
+        env:
+          POSTGRES_USER: rails
+          POSTGRES_HOST_AUTH_METHOD: trust
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+        - 5432:5432
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Docker build
+        uses: docker/build-push-action@v5
+        with:
+          tags: |
+            ${{ env.docker_image_tag }}
+
+          context: .
+          load: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      - name: Prepare database
+        run: docker run -t --env RAILS_ENV=test --env CI=true --network=host $docker_image_tag bin/rails db:create 
+      - name: Run rspec
+        run: docker run -t --env RAILS_ENV=test --env CI=true --network=host $docker_image_tag bundle exec rspec
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2.2'
+          bundler-cache: true
+      - name: Run Rubocop
+        run: bundle exec rubocop --format=github
+
+  deploy:
+    if: github.ref_name == 'main'
+    needs: [build, lint]
+    runs-on: ubuntu-latest
+
+    env:
+      FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+      remote_docker_image_tag: registry.fly.io/animal-of-the-week:${{ github.sha }}
+
+    steps:
+      - name: Auth to Fly.io Docker registry
+        uses: superfly/flyctl-actions/setup-flyctl@master
+      - run: flyctl auth docker
+      - name: Push image to remote repository
+        run: |
+          docker tag $docker_image_tag "$remote_docker_image_tag" 
+          docker push "$remote_docker_image_tag"
+      - name: Deploy image to Fly.io
+        uses: superfly/flyctl-actions/setup-flyctl@master
+      - run: flyctl deploy -i ${{ env.remote_docker_image_tag }} --local-only -a animal-of-the-week

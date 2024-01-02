@@ -1,5 +1,7 @@
 require:
   - rubocop-performance
+  - rubocop-rspec
+  - rubocop-rails
 
 AllCops:
   SuggestExtensions: false
@@ -8,6 +10,7 @@ AllCops:
   TargetRubyVersion: 3.2.2
   Exclude:
     - "db/*"
+    - "vendor/bundle/**/*"
 
 inherit_from:
   - .rubocop/custom.yml
