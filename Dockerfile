@@ -48,7 +48,6 @@ FROM base
 RUN apk --update --no-cache add \
     bash \
     curl \
-    vips \
     postgresql-client
 
 # Copy built artifacts: gems, application
