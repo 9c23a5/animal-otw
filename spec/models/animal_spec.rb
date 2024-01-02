@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe Animal, type: :model do
+RSpec.describe Animal do
   subject { described_class.new(name: "Dog") }
 
   it "is valid with valid attributes" do
@@ -12,7 +12,7 @@ RSpec.describe Animal, type: :model do
   it "is invalid without a name" do
     subject.name = nil
 
-    expect(subject).to_not be_valid
+    expect(subject).not_to be_valid
   end
 
   context "has a wikipedia link" do
@@ -30,7 +30,7 @@ RSpec.describe Animal, type: :model do
 
       it "is not valid with invalid wikipedia_link" do
         subject.wikipedia_link = wikipedia_link
-        expect(subject).to_not be_valid
+        expect(subject).not_to be_valid
         expect(subject.errors.key?("wikipedia_link")).to be true
       end
     end
@@ -40,17 +40,19 @@ RSpec.describe Animal, type: :model do
 
       it "is not valid with invalid wikipedia_link" do
         subject.wikipedia_link = wikipedia_link
-        expect(subject).to_not be_valid
+        expect(subject).not_to be_valid
         expect(subject.errors.key?("wikipedia_link")).to be true
       end
     end
   end
 
   context "existing record with same name" do
-    let!(:animal) { described_class.create!(name: "Dog") }
+    let(:animal) { described_class.new(name: "Dog") }
 
-    it "is not valid if name is not unique" do
-      expect(subject).to_not be_valid
+    it "is not valid" do
+      expect(subject).to be_valid
+      animal.save!
+      expect(subject).not_to be_valid
     end
   end
 end
