@@ -65,6 +65,7 @@ group :development do
   gem "dockerfile-rails", ">= 1.5"
   gem "rubocop", require: false
   gem "rubocop-performance", require: false
+  gem "rubocop-rails", require: false
   gem "rubocop-rspec", "~> 2.0", require: false
 end
 
@@ -74,11 +75,3 @@ group :test do
   # gem "selenium-webdriver"
   gem "rspec-its"
 end
-
-# gem "sentry-ruby", "~> 5.15"
-
-# gem "sentry-rails", "~> 5.15"
-
-gem "sentry-ruby", "~> 5.15"
-
-gem "sentry-rails", "~> 5.15"
